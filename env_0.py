@@ -8,8 +8,6 @@ from collections import deque
 
 from sqlalchemy import false
 
-from game.贪吃蛇 import Creat_Food, Food_Style, init_snake
-
 #基础设置
 Screen_Height=480
 Screen_Width=600
@@ -69,14 +67,15 @@ class env():
         self.font2 = pygame.font.SysFont(None, 72)
         self.fwidth, self.fheight = self.font2.size('GAME OVER')
         self.flag = True
-        self.snake = init_snake()
-        self.food = Creat_Food(snake = self.snake)
-        Food_Style()
+        self.snake = self.init_snake()
+        self.food = self.Creat_food(snake = self.snake)
+        self.Food_Style()
         self.pos = (0,1)
         self.game_over = True
         self.game_start = False
         self.score = 0
         self.orispeed = 0.3
+
         
 
 

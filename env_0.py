@@ -58,7 +58,7 @@ class env():
             self.food_y = random.randint(Area_y[0], Area_y[1])
     def Food_Style(self):
         self.food_style = Food_Style_List[random.randint(0,2)]
-    def Start(self):
+    def Ready(self):
         self.game = pygame
         self.game.init()
         self.screen = self.game.display.set_mode((self.screen_width,self.screen_height))
@@ -75,6 +75,26 @@ class env():
         self.game_start = False
         self.score = 0
         self.orispeed = 0.3
+        self.speed = self.orispeed
+        self.last_move_time = None
+        self.pause = False
+    def Start(self):
+        if self.game_over:
+            self.game_start = True
+            self.game_over = False
+            self.snake = self.init_snake()
+            self.food_style = self.Food_Style()
+            self.pos = (0,1)
+            self.score = 0
+            self.last_move_time = time.time()
+            
+            
+        
+
+    
+
+
+
 
         
 

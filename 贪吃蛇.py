@@ -93,7 +93,7 @@ def main():
     speed=orispeed  #蛇速度
     last_move_time=None
     pause=False #暂停
-    while True:
+    while True: 
         for event in pygame.event.get():
             if event.type==QUIT:
                 sys.exit()
@@ -169,9 +169,9 @@ def main():
 
 第二个参数指定颜色
 
-第三个参数指定矩形的范围（left，top，width，height）
+第三个参数指定矩形的范围(left,top,width,height)
 
-第四个参数指定矩形边框的大小（0表示填充矩形）
+第四个参数指定矩形边框的大小(0表示填充矩形)
 
 例如绘制三个矩形：
 

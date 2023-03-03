@@ -25,7 +25,6 @@ Dark=(200,200,200)
 Black=(0,0,0)
 Red=(200,30,30)
 Back_Ground=(40,40,60)
-
 class env():
     def __init__(self) -> None:
         self.screen_height = 480
@@ -44,20 +43,23 @@ class env():
     def Print_Text(screen,font,x,y,text,fcolor=(255,255,255)):
         Text=font.render(text,True,fcolor)
         screen.blit(Text,(x,y))
+
     def init_snake(self):
         self.snake = deque()
-        self.snake.append(Area_x[0]+2,Area_y[0])
-        self.snake.append(Area_x[0]+1,Area_y[0])
-        self.snake.append(Area_x[0],Area_y[0])
+        self.snake.append(self.area_x[0]+2,self.area_y[0])
+        self.snake.append(self.area_x[0]+1,self.area_y[0])
+        self.snake.append(self.area_x[0],self.area_y[0])
         
     def Creat_food(self):
-        self.food_x = random.randint(Area_x[0], Area_x[1])
-        self.food_y = random.randint(Area_y[0], Area_y[1])
+        self.food_x = random.randint(self.area_x[0], self.area_x[1])
+        self.food_y = random.randint(self.area_y[0], self.area_y[1])
         while (self.food_x,self.food_y) in  self.snake:
-            self.food_x = random.randint(Area_x[0], Area_x[1])
-            self.food_y = random.randint(Area_y[0], Area_y[1])
+            self.food_x = random.randint(self.area_x[0], self.area_x[1])
+            self.food_y = random.randint(self.area_y[0], self.area_y[1])
+
     def Food_Style(self):
-        self.food_style = Food_Style_List[random.randint(0,2)]
+        self.food_style = self.food_style_list[random.randint(0,2)]
+
     def Ready(self):
         self.game = pygame
         self.game.init()
@@ -70,7 +72,7 @@ class env():
         self.snake = self.init_snake()
         self.food = self.Creat_food(snake = self.snake)
         self.Food_Style()
-        self.pos = (0,1)
+        self.pos = (1,0)
         self.game_over = True
         self.game_start = False
         self.score = 0
@@ -78,17 +80,79 @@ class env():
         self.speed = self.orispeed
         self.last_move_time = None
         self.pause = False
+
     def Start(self):
         if self.game_over:
             self.game_start = True
             self.game_over = False
             self.snake = self.init_snake()
             self.food_style = self.Food_Style()
-            self.pos = (0,1)
+            self.pos = (1,0)
             self.score = 0
             self.last_move_time = time.time()
+        self.screen.fill(self.back_ground)
+        for x in range(self.size,self.screen_width,self.size):
+            self.game.draw.line(self.screen,self.black,(x, self.area_y[0] * self.size),(x,self.screen_height),self.line_width)
+        for y in range(Area_y[0] * self.size, self.screen_height, self.size):
+            self.game.draw.line(self.screen, self.black, (0, y), (self.screen_width, y), self.line_width)
+    
+    def action_trans(pos,move):
+        if pos == (1,0):
+            if move[0] == 1:
+                pos = (0,-1)
+            elif move[1] == 1:
+                pos = pos
+            elif move[2] == 1:
+                pos = (0,1)
+        elif pos == (-1,0):
+            if move[0] == 1:
+                pos = (0,1)
+            elif move[1] == 1:
+                pos = pos
+            elif move[2] == 1:
+                pos = (0,-1)
+        elif pos == (0,1):
+            if move[0] == 1:
+                pos = (1,0)
+            elif move[1] == 1:
+                pos = pos
+            elif move[2] == 1:
+                pos = (-1,0)
+        elif pos == (0,-1):
+            if move[0] == 1:
+                pos = (-1,0)
+            elif move[1] == 1:
+                pos = pos
+            elif move[2] == 1:
+                pos = (1,0)
+        return pos
+    
+    def Step(self,move): # move = [1,0,0] or [0,1,0] or [0,0,1]
+        self.pos = self.action_trans(self.pos,move)
+        if not self.game_over:
+            curTime = time.time()
+            if curTime - self.last_move_time > self.speed:
+                self.last_move_time = curTime
+                next_s = (self.snake[0][0] + self.pos[0], self.snake[0][1] + self.pos[1])
+                if next_s == self.food:
+                    self.snake.appendleft(next_s)
+                    self.score += self.food_style[0]
+                    self.speed = self.orispeed - 0.03 * (self.score//100)
+                    self.food = self.Creat_food(self.snake)
+                    self.food_style = self.Food_Style()
+                
+
+
+
             
             
+
+        
+
+
+
+ 
+
         
 
     

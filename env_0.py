@@ -140,8 +140,12 @@ class env():
                     self.speed = self.orispeed - 0.03 * (self.score//100)
                     self.food = self.Creat_food(self.snake)
                     self.food_style = self.Food_Style()
-                
-
+                else:
+                    if self.area_x[0]<=next_s[0]<=self.area_x[1] and self.area_y[0]<=next_s[1]<=self.area_y[1] and next_s not in self.snake:
+                        self.snake.appendleft((next_s))
+                        self.snake.pop()
+                    else:
+                        self.game_over = True
 
 
             

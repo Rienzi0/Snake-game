@@ -147,8 +147,20 @@ class env():
                     else:
                         self.game_over = True
 
+        if not self.game_over:
+            self.game.draw.rect(self.screen, self.food_style[1], (self.food[0] * Size, self.food[1] * Size, Size, Size), 0)
+        for s in self.snake:
+            self.game.draw.rect(self.screen, self.dark, (s[0] * self.size + self.line_width, s[1] * self.size + self.line_width, self.size - self.line_width * 2, self.size - self.line_width * 2), 0)
+        self.Print_Text(self.screen, self.font1, 30, 7, f'speed: {self.score // 100}')
+        self.Print_Text(self.screen, self.font1, 450, 7, f'score: {self.score}')  
+        
+        return self.game_over
+    
+    
 
-            
+        
+
+
             
 
         

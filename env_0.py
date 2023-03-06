@@ -51,12 +51,13 @@ class env():
         self.snake.append(self.area_x[0],self.area_y[0])
         
     def Creat_food(self):
-        self.food_x = random.randint(self.area_x[0], self.area_x[1])
-        self.food_y = random.randint(self.area_y[0], self.area_y[1])
-        while (self.food_x,self.food_y) in  self.snake:
-            self.food_x = random.randint(self.area_x[0], self.area_x[1])
-            self.food_y = random.randint(self.area_y[0], self.area_y[1])
-
+        food_x = random.randint(self.area_x[0], self.area_x[1])
+        food_y = random.randint(self.area_y[0], self.area_y[1])
+        while (food_x,food_y) in  self.snake:
+            food_x = random.randint(self.area_x[0], self.area_x[1])
+            food_y = random.randint(self.area_y[0], self.area_y[1])
+        return food_x,food_y
+        
     def Food_Style(self):
         self.food_style = self.food_style_list[random.randint(0,2)]
 
@@ -155,6 +156,26 @@ class env():
         self.Print_Text(self.screen, self.font1, 450, 7, f'score: {self.score}')  
         
         return self.game_over
+    def get_state(self):
+        score = self.score 
+        direction_x, direction_y = self.pos[0],self.pos[1]
+        snak_body = [s for s in self.snake]
+        speed = self.speed
+        food_x,food_y =self.food
+        state = [score,direction_x,direction_y,speed,food_x,food_y].extend(snak_body)
+
+        return state
+    
+if __name__ == "main":
+    env = env()
+    env.Ready()
+    
+
+
+
+
+
+
     
     
 

@@ -169,7 +169,8 @@ class env():
 if __name__ == "main":
     env = env()
     env.Ready()
-    
+    env.Start()
+
 
 
 

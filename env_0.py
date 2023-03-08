@@ -39,16 +39,19 @@ class env():
         self.black = (0,0,0)
         self.red = (200,30,30)
         self.back_ground = (40,40,60)
+        print("successfully initialized")
 
     def Print_Text(screen,font,x,y,text,fcolor=(255,255,255)):
         Text=font.render(text,True,fcolor)
         screen.blit(Text,(x,y))
 
     def init_snake(self):
-        self.snake = deque()
-        self.snake.append(self.area_x[0]+2,self.area_y[0])
-        self.snake.append(self.area_x[0]+1,self.area_y[0])
-        self.snake.append(self.area_x[0],self.area_y[0])
+        snake = deque()
+        snake.append((self.area_x[0]+2,self.area_y[0]))
+        snake.append((self.area_x[0]+1,self.area_y[0]))
+        snake.append((self.area_x[0],self.area_y[0]))
+        return snake
+        
         
     def Creat_food(self):
         food_x = random.randint(self.area_x[0], self.area_x[1])
@@ -71,7 +74,7 @@ class env():
         self.fwidth, self.fheight = self.font2.size('GAME OVER')
         self.flag = True
         self.snake = self.init_snake()
-        self.food = self.Creat_food(snake = self.snake)
+        self.food = self.Creat_food()
         self.Food_Style()
         self.pos = (1,0)
         self.game_over = True
@@ -159,17 +162,24 @@ class env():
     def get_state(self):
         score = self.score 
         direction_x, direction_y = self.pos[0],self.pos[1]
-        snak_body = [s for s in self.snake]
+        _body = [s for s in self.snake]
+        snake_body = []
+        for i in _body:
+            snake_body.append(i[0])
+            snake_body.append(i[1]) 
         speed = self.speed
         food_x,food_y =self.food
-        state = [score,direction_x,direction_y,speed,food_x,food_y].extend(snak_body)
+        state = [score,direction_x,direction_y,speed,food_x,food_y] + snake_body
+        
 
         return state
     
-if __name__ == "main":
+if __name__ == "__main__":
     env = env()
     env.Ready()
     env.Start()
+    
+    print(env.get_state())
 
 
 

@@ -41,7 +41,7 @@ class env():
         self.back_ground = (40,40,60)
         print("successfully initialized")
 
-    def Print_Text(screen,font,x,y,text,fcolor=(255,255,255)):
+    def Print_Text(self,screen,font,x,y,text,fcolor=(255,255,255)):
         Text=font.render(text,True,fcolor)
         screen.blit(Text,(x,y))
 
@@ -62,7 +62,8 @@ class env():
         return food_x,food_y
         
     def Food_Style(self):
-        self.food_style = self.food_style_list[random.randint(0,2)]
+        food_style = self.food_style_list[random.randint(0,2)]
+        return food_style
 
     def Ready(self):
         self.game = pygame
@@ -84,6 +85,7 @@ class env():
         self.speed = self.orispeed
         self.last_move_time = None
         self.pause = False
+        
 
     def Start(self):
         if self.game_over:
@@ -99,8 +101,8 @@ class env():
             self.game.draw.line(self.screen,self.black,(x, self.area_y[0] * self.size),(x,self.screen_height),self.line_width)
         for y in range(Area_y[0] * self.size, self.screen_height, self.size):
             self.game.draw.line(self.screen, self.black, (0, y), (self.screen_width, y), self.line_width)
-    
-    def action_trans(pos,move):
+        
+    def action_trans(self,pos,move):
         if pos == (1,0):
             if move[0] == 1:
                 pos = (0,-1)
@@ -132,6 +134,11 @@ class env():
         return pos
     
     def Step(self,move): # move = [1,0,0] or [0,1,0] or [0,0,1]
+        self.screen.fill(self.back_ground)
+        for x in range(self.size,self.screen_width,self.size):
+            self.game.draw.line(self.screen,self.black,(x, self.area_y[0] * self.size),(x,self.screen_height),self.line_width)
+        for y in range(Area_y[0] * self.size, self.screen_height, self.size):
+            self.game.draw.line(self.screen, self.black, (0, y), (self.screen_width, y), self.line_width)
         self.pos = self.action_trans(self.pos,move)
         if not self.game_over:
             curTime = time.time()
@@ -170,16 +177,19 @@ class env():
         speed = self.speed
         food_x,food_y =self.food
         state = [score,direction_x,direction_y,speed,food_x,food_y] + snake_body
-        
 
-        return state
+        self.game.display.update()
+        return snake_body
     
 if __name__ == "__main__":
     env = env()
     env.Ready()
     env.Start()
     
-    print(env.get_state())
+    while True:
+        env.Step([0,1,0])
+    
+        print(env.get_state())
 
 
 

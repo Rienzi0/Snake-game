@@ -163,7 +163,8 @@ def main():
                             game_over=True
         #画食物
         if not game_over:
-         '''
+            pygame.draw.rect(screen, food_style[1], (food[0] * Size, food[1] * Size, Size, Size), 0)
+        '''
         rect(Surface,color,Rect,width=0)
 第一个参数指定矩形绘制到哪个Surface对象上
 
@@ -178,9 +179,9 @@ def main():
     pygame.draw.rect(screen, BLACK, (50, 50, 150, 50), 0)
     pygame.draw.rect(screen, BLACK, (250, 50, 150, 50), 1)
     pygame.draw.rect(screen, BLACK, (450, 50, 150, 50), 10)
-         '''
+        '''
         # 避免 GAME OVER 的时候把 GAME OVER 的字给遮住了
-        pygame.draw.rect(screen, food_style[1], (food[0] * Size, food[1] * Size, Size, Size), 0)
+        
         #画蛇
         for s in snake:
             pygame.draw.rect(screen, Dark, (s[0] * Size + Line_Width, s[1] * Size + Line_Width,
@@ -194,6 +195,7 @@ def main():
                 #print('GameOver')
                 Print_Txt(screen, font2, (Screen_Width - fwidth) // 2, (Screen_Height - fheight) // 2, 'GAME OVER',Red)
         pygame.display.update()
+   
 if __name__=='__main__':
     main()
 

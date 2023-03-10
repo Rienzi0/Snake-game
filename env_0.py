@@ -103,28 +103,28 @@ class env():
             self.game.draw.line(self.screen, self.black, (0, y), (self.screen_width, y), self.line_width)
         
     def action_trans(self,pos,move):
-        if pos == (1,0):
+        if pos == (1,0): #right
             if move[0] == 1:
                 pos = (0,-1)
             elif move[1] == 1:
                 pos = pos
             elif move[2] == 1:
                 pos = (0,1)
-        elif pos == (-1,0):
+        elif pos == (-1,0): #left
             if move[0] == 1:
                 pos = (0,1)
             elif move[1] == 1:
                 pos = pos
             elif move[2] == 1:
                 pos = (0,-1)
-        elif pos == (0,1):
+        elif pos == (0,1): #down
             if move[0] == 1:
                 pos = (1,0)
             elif move[1] == 1:
                 pos = pos
             elif move[2] == 1:
                 pos = (-1,0)
-        elif pos == (0,-1):
+        elif pos == (0,-1): #up
             if move[0] == 1:
                 pos = (-1,0)
             elif move[1] == 1:
@@ -185,11 +185,13 @@ if __name__ == "__main__":
     env = env()
     env.Ready()
     env.Start()
+    game_over = False
+    while game_over == False:
+        game_over = env.Step([0,1,0])
+        env.get_state()
+        print(env.pos)
     
-    while True:
-        env.Step([0,1,0])
     
-        print(env.get_state())
 
 
 

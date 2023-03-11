@@ -139,10 +139,11 @@ class env():
             self.game.draw.line(self.screen,self.black,(x, self.area_y[0] * self.size),(x,self.screen_height),self.line_width)
         for y in range(Area_y[0] * self.size, self.screen_height, self.size):
             self.game.draw.line(self.screen, self.black, (0, y), (self.screen_width, y), self.line_width)
-        self.pos = self.action_trans(self.pos,move)
+        
         if not self.game_over:
             curTime = time.time()
             if curTime - self.last_move_time > self.speed:
+                self.pos = self.action_trans(self.pos,move)
                 self.last_move_time = curTime
                 next_s = (self.snake[0][0] + self.pos[0], self.snake[0][1] + self.pos[1])
                 if next_s == self.food:
@@ -152,6 +153,7 @@ class env():
                     self.food = self.Creat_food(self.snake)
                     self.food_style = self.Food_Style()
                 else:
+                    
                     if self.area_x[0]<=next_s[0]<=self.area_x[1] and self.area_y[0]<=next_s[1]<=self.area_y[1] and next_s not in self.snake:
                         self.snake.appendleft((next_s))
                         self.snake.pop()
@@ -164,7 +166,8 @@ class env():
             self.game.draw.rect(self.screen, self.dark, (s[0] * self.size + self.line_width, s[1] * self.size + self.line_width, self.size - self.line_width * 2, self.size - self.line_width * 2), 0)
         self.Print_Text(self.screen, self.font1, 30, 7, f'speed: {self.score // 100}')
         self.Print_Text(self.screen, self.font1, 450, 7, f'score: {self.score}')  
-        
+        self.game.display.update()
+        print("steped")
         return self.game_over
     def get_state(self):
         score = self.score 
@@ -178,7 +181,7 @@ class env():
         food_x,food_y =self.food
         state = [score,direction_x,direction_y,speed,food_x,food_y] + snake_body
 
-        self.game.display.update()
+        #self.game.display.update()
         return snake_body
     
 if __name__ == "__main__":
@@ -186,10 +189,13 @@ if __name__ == "__main__":
     env.Ready()
     env.Start()
     game_over = False
-    while game_over == False:
-        game_over = env.Step([0,1,0])
-        env.get_state()
+    num = 4000
+    while num > 1:
+        game_over = env.Step([1,0,0])
+        body = env.get_state()
+        print(body)
         print(env.pos)
+        num -= 1
     
     
 

@@ -150,7 +150,6 @@ class QNet_v1(nn.Module):  # 通过 s 预测出 a
     def forward(self, x):
         x = self.layer1_task(x[:, :self.s_task_dim])  # 任务
         
-        
         x = self.layer2(x)
         x = self.layer3(x)
         return x

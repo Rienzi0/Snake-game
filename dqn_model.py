@@ -11,14 +11,13 @@ TARGET_REPLACE_ITER = 50  # target update frequency
 
 class DQN(object):
     # 每次把一个任务分配给一个虚拟机
-    def __init__(self, task_dim, vms, vm_dim):
+    def __init__(self,task_dim,a_dim):
         self.task_dim = task_dim  # 任务维度
-        self.vms = vms  # 虚拟机数量
-        self.vm_dim = vm_dim  # 虚拟机维度
+        
 
         self.s_task_dim = self.task_dim  # 任务状态维度
-        self.s_vm_dim = self.vms * self.vm_dim  # 虚拟机状态维度
-        self.a_dim = self.vms  # 动作空间：虚拟机的个数
+        
+        self.a_dim = self.a_dim  # 动作空间
 
         self.lr = 0.003  # learning rate
         self.batch_size = 32  # 128
@@ -27,9 +26,9 @@ class DQN(object):
         self.epsilon_min = 0.1
         self.step = 0
 
-        self.eval_net = QNet_v1(self.s_task_dim, self.s_vm_dim, self.a_dim)
+        self.eval_net = QNet_v1(self.s_task_dim,  self.a_dim)
         self.eval_net.apply(self.weights_init)
-        self.target_net = QNet_v1(self.s_task_dim, self.s_vm_dim, self.a_dim)
+        self.target_net = QNet_v1(self.s_task_dim,  self.a_dim)
         self.optimizer = torch.optim.Adam(self.eval_net.parameters(), lr=self.lr)
 
         self.hard_update(self.target_net, self.eval_net)  # 初始化为相同权重
@@ -41,10 +40,11 @@ class DQN(object):
         except:
             print("没有发现logs文件目录")
         self.writer = SummaryWriter("dqn/logs/")
-        '''
+        
         dummy_input = Variable(torch.rand(5, self.s_task_dim+self.s_vm_dim))
         with SummaryWriter(logdir="dqn/logs/graph", comment="Q_net") as w:
             w.add_graph(self.eval_net, (dummy_input))
+        '''
 
     # 多个状态传入，给每个状态选择一个动作
     def choose_action(self, s_list):
@@ -64,7 +64,7 @@ class DQN(object):
             actions = np.array(actions)
         else:
             # 范围：[low,high),随机选择，虚拟机编号1到self.vms+1，共n_actions个任务
-            actions = np.random.randint(0, self.vms, size=[1, len(s_list)])[0]
+            actions = np.random.randint(0, self.a_dim, size=[1, len(s_list)])[0]
 
         # 后面的代码增加分配VM的合理性
         adict = {}
@@ -72,7 +72,7 @@ class DQN(object):
             if num not in adict:
                 adict[num] = 1
             elif adict[num] > 2 and np.random.uniform() < adict[num] / 4:  # 如果VM被分配的任务个数大于2，按后面的概率随机给任务分配VM
-                actions[i] = np.random.randint(self.vms)  # 范围:[0,20)
+                actions[i] = np.random.randint(self.a_dim)  # 范围:[0,20)
                 adict[num] += 1
             else:
                 adict[num] += 1
@@ -126,28 +126,17 @@ class DQN(object):
 
 
 class QNet_v1(nn.Module):  # 通过 s 预测出 a
-    def __init__(self, s_task_dim, s_vm_dim, a_dim):
+    def __init__(self, s_task_dim, a_dim):
         super(QNet_v1, self).__init__()
         self.s_task_dim = s_task_dim
-        self.s_vm_dim = s_vm_dim
+        
         self.layer1_task = nn.Sequential(  # 处理任务状态
-            nn.Linear(self.s_task_dim, 16),
+            nn.Linear(self.s_task_dim, 32),
             torch.nn.Dropout(0.2),
             nn.BatchNorm1d(16),
             nn.LeakyReLU(),
         )
-        self.layer1_1vm = nn.Sequential(  # 处理虚拟机状态
-            nn.Linear(self.s_vm_dim, 32),
-            torch.nn.Dropout(0.2),
-            nn.BatchNorm1d(32),
-            nn.LeakyReLU(),
-        )
-        self.layer1_2vm = nn.Sequential(
-            nn.Linear(32, 16),
-            torch.nn.Dropout(0.2),
-            nn.BatchNorm1d(16),
-            nn.LeakyReLU(),
-        )
+        
         self.layer2 = nn.Sequential(  # 融合处理结果
             nn.Linear(32, 16),
             torch.nn.Dropout(0.2),
@@ -159,10 +148,9 @@ class QNet_v1(nn.Module):  # 通过 s 预测出 a
         )
 
     def forward(self, x):
-        x1 = self.layer1_task(x[:, :self.s_task_dim])  # 任务
-        x2 = self.layer1_1vm(x[:, self.s_task_dim:])  # 虚拟机
-        x2 = self.layer1_2vm(x2)
-        x = torch.cat((x1, x2), dim=1)
+        x = self.layer1_task(x[:, :self.s_task_dim])  # 任务
+        
+        
         x = self.layer2(x)
         x = self.layer3(x)
         return x

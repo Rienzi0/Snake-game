@@ -17,7 +17,7 @@ class DQN(object):
 
         self.s_task_dim = self.task_dim  # 任务状态维度
         
-        self.a_dim = self.a_dim  # 动作空间
+        self.a_dim = a_dim  # 动作空间
 
         self.lr = 0.003  # learning rate
         self.batch_size = 32  # 128

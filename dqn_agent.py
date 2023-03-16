@@ -1,34 +1,14 @@
 import numpy as np
 import time
-
-from core.task import Task
-from util.fileio import FileIo
-from dqn.DQN_model_v1 import DQN
-from base_utilize import *
-
+from dqn_model import DQN
+from env_0 import env
 wait_p = 1
 bbeta = 0.5
-# 通过任务和机器获取状态
-def get_state(tasks_list, machines):
-    start_time = tasks_list[0].start_time  # 当前批次任务的开始时间
-    machines_state = []
-    for machine in machines:
-        machines_state.append(machine.mips)
-        machines_state.append(max(machine.next_start_time - start_time, 0))  # 等待时间
-    tasks_state = []
-    for i, task in enumerate(tasks_list):
-        task_state = []
-        task_state.append(task.mi)
-        task_state.append(task.cpu_utilization)
-        task_state.append(task.mi / machines[0].speed)  # 传输时间
-        task_state += machines_state  # 由于是DQN，所以一个任务状态加上多个虚拟机状态
-        tasks_state.append(task_state)
-    return tasks_state
 
 
 def main(taskDim, vmDim, cluster, filepath_input, filepath_output):
     vmsNum = len(cluster.machines)
-    all_batch_tasks = FileIo(filepath_input).readAllBatchLines()
+    
     print("环境创建成功！")
 
     state_all = []  # 存储所有的状态 [None,2+2*20]
@@ -52,21 +32,7 @@ def main(taskDim, vmDim, cluster, filepath_input, filepath_output):
 
 
         
-        c_max = 0
-        c_min = 100000
-        r_max = 0
-        r_min = 100000
-        for task in cluster.finished_tasks[-len(tasks_list):]:
-            if task.task_response_time / task.mi > r_max:
-                r_max = task.task_response_time
-            elif task.task_response_time / task.mi < r_min:
-                r_min = task.task_response_time / task.mi
-            if task.task_run_time * cluster.machines[task.task_machine_id].micost > c_max:
-                c_max = task.task_run_time * cluster.machines[task.task_machine_id].micost
-            elif task.task_run_time * cluster.machines[task.task_machine_id].micost < c_min:
-                c_min = task.task_run_time * cluster.machines[task.task_machine_id].micost
-        #reward = [ bbeta * (task.task_response_time / task.mi - r_min)/(r_max - r_min) + (1 - bbeta) * (task.task_run_time * cluster.machines[task.task_machine_id].micost / c_max) for task in cluster.finished_tasks[-len(tasks_list):]]
-        #reward_all.append([(sum(reward) + reward_p)/ len(reward)])
+        
         
         for i, task in enumerate(cluster.finished_tasks[-len(tasks_list):]):  # 便历新提交的一批任务，记录动作和奖励
             action_all.append([task.task_machine_id])
@@ -102,13 +68,11 @@ def main(taskDim, vmDim, cluster, filepath_input, filepath_output):
 if __name__ == '__main__':
     start_time = time.time()
     taskDim = 3
-    vmDim = 2
-    
-    
+
     #filepath_input = "data/real/real_tasks(5-50)(100).txt"
     filepath_input = "data/real/google.txt"
     filepath_output = "/Users/rienzi/Desktop/实验代码/Pycloudsim/result/dqn(google).txt"
     #filepath_output = "/Users/rienzi/Desktop/实验代码/Pycloudsim/result/dqn(5-50)(100).txt"
     main(taskDim, vmDim, cluster, filepath_input, filepath_output)
-    cluster.reboot()  # 结束之后重启，开始下一轮仿真
-    print("完成:"+filepath_output)
+   
+   

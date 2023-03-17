@@ -6,7 +6,7 @@ wait_p = 1
 bbeta = 0.5
 
 
-def main(taskDim, vmDim, cluster, filepath_input, filepath_output):
+def main(taskDim, action_dim):
     vmsNum = len(cluster.machines)
     
     print("环境创建成功！")

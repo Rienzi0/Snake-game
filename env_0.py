@@ -95,6 +95,7 @@ class env():
             self.food_style = self.Food_Style()
             self.pos = (1,0)
             self.score = 0
+            self.score_list = [0]
             self.last_move_time = time.time()
         self.screen.fill(self.back_ground)
         for x in range(self.size,self.screen_width,self.size):
@@ -149,6 +150,7 @@ class env():
                 if next_s == self.food:
                     self.snake.appendleft(next_s)
                     self.score += self.food_style[0]
+                    self.score_list.append(self.score)
                     self.speed = self.orispeed - 0.03 * (self.score//100)
                     self.food = self.Creat_food(self.snake)
                     self.food_style = self.Food_Style()

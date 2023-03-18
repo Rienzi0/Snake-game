@@ -2,29 +2,23 @@ import numpy as np
 import time
 from dqn_model import DQN
 from env_0 import env
-wait_p = 1
-bbeta = 0.5
+Steps = 1000
 
 
-def main(taskDim, action_dim):
-    vmsNum = len(cluster.machines)
+def main(taskDim, action_dim,env):
     
-    print("环境创建成功！")
 
     state_all = []  # 存储所有的状态 [None,2+2*20]
     action_all = []  # 存储所有的动作 [None,1]
     reward_all = []  # 存储所有的奖励 [None,1]
 
-    DRL = DQN(taskDim, vmsNum, vmDim)
+    DRL = DQN(taskDim, action_dim)
     print("网络初始化成功！")
 
-    for step, batch_tasks in enumerate(all_batch_tasks):
-        #print(len(all_batch_tasks))
-        tasks_list = []
-        for task in batch_tasks:
-            tasks_list.append(Task(task[0], task[1], task[2], task[3]))  # 构建任务
-
-        states = get_state(tasks_list, cluster.machines)
+    for step in range(Steps):
+        
+        
+        states = env.get_state
         state_all += states
         machines_id = DRL.choose_action(np.array(states))  # 通过调度算法得到分配 id
         machines_id = machines_id.astype(int).tolist()

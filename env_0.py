@@ -184,7 +184,7 @@ class env():
         state = [score,direction_x,direction_y,speed,food_x,food_y] + snake_body
 
         #self.game.display.update()
-        return snake_body
+        return state
     
 if __name__ == "__main__":
     env = env()

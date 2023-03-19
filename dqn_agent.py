@@ -37,10 +37,10 @@ def main(taskDim, action_dim,env):
             reward_all.append([(reward +reward_p + 0.0001)])  # 计算奖励
         
         # 减少存储数据量
-        if len(state_all) > 3000:
-            state_all = state_all[-1500:]
-            action_all = action_all[-1500:]
-            reward_all = reward_all[-1500:]
+        if len(state_all) > 300:
+            state_all = state_all[-150:]
+            action_all = action_all[-150:]
+            reward_all = reward_all[-150:]
 
         # 先学习一些经验，再学习
         if step > 400: ######step >400

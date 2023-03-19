@@ -6,4 +6,9 @@ def score_reward(env):
     else:
         reward = 0
     return reward
-    
+
+def game_reward(env):
+    if env.game_over == False:
+        return 1
+    else:
+        return -100

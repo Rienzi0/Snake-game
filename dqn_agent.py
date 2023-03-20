@@ -3,7 +3,7 @@ import time
 from dqn_model import DQN
 from env_0 import env
 Steps = 1000
-
+from reward_fn import score_reward,game_reward
 
 def main(taskDim, action_dim,env):
     

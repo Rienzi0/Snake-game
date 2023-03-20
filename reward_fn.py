@@ -12,3 +12,4 @@ def game_reward(env):
         return 1
     else:
         return -100
+

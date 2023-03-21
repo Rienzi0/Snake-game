@@ -185,19 +185,25 @@ class env():
 
         #self.game.display.update()
         return state
+   
+
     
+        
 if __name__ == "__main__":
-    env = env()
-    env.Ready()
-    env.Start()
+    en = env()
+    en.Ready()
+    en.Start()
     game_over = False
     num = 4000
     while num > 1:
-        game_over = env.Step([1,0,0])
-        body = env.get_state()
+        game_over = en.Step([1,0,0])
+        body = en.get_state()
         print(body)
-        print(env.pos)
+        print(en.pos)
         num -= 1
+        if game_over == 1:
+            del en
+
     
     
 

@@ -4,23 +4,23 @@ from tensorboardX import SummaryWriter
 from torch.autograd import Variable
 import numpy as np
 import shutil
+import torch.nn.functional as F
 
 GAMMA = 0.7  # reward discount
 TARGET_REPLACE_ITER = 50  # target update frequency
 
 
-class DQN(object):
+class DQN(nn.Module):
     # 每次把一个任务分配给一个虚拟机
     def __init__(self,task_dim,a_dim):
+        super(DQN,self).__init__()
         self.task_dim = task_dim  # 任务维度
-        
-
         self.s_task_dim = self.task_dim  # 任务状态维度
         
         self.a_dim = a_dim  # 动作空间
 
         self.lr = 0.003  # learning rate
-        self.batch_size = 32  # 128
+        self.batch_size = 8  # 128
         self.epsilon = 0.95
         self.epsilon_decay = 0.997
         self.epsilon_min = 0.1
@@ -62,10 +62,11 @@ class DQN(object):
             for line in actions_pro_value:
                 actions.append(np.random.choice(indexs, p=line.ravel()).tolist())  # 根据概率选择动作
             actions = np.array(actions)
+            #print(actions)
         else:
             # 范围：[low,high),随机选择，虚拟机编号1到self.vms+1，共n_actions个任务
             actions = np.random.randint(0, self.a_dim, size=[1, len(s_list)])[0]
-
+        #print(actions)
         # 后面的代码增加分配VM的合理性
         adict = {}
         for i, num in enumerate(actions):
@@ -76,6 +77,7 @@ class DQN(object):
                 adict[num] += 1
             else:
                 adict[num] += 1
+        
         return actions
 
     def learn(self):
@@ -130,10 +132,10 @@ class QNet_v1(nn.Module):  # 通过 s 预测出 a
         super(QNet_v1, self).__init__()
         self.s_task_dim = s_task_dim
         
-        self.layer1_task = nn.Sequential(  # 处理任务状态
+        self.layer1 = nn.Sequential(  # 处理任务状态
             nn.Linear(self.s_task_dim, 32),
             torch.nn.Dropout(0.2),
-            nn.BatchNorm1d(16),
+            nn.BatchNorm1d(32),
             nn.LeakyReLU(),
         )
         
@@ -145,11 +147,14 @@ class QNet_v1(nn.Module):  # 通过 s 预测出 a
         )
         self.layer3 = nn.Sequential(
             nn.Linear(16, a_dim)
+            
         )
 
     def forward(self, x):
-        x = self.layer1_task(x[:, :self.s_task_dim])  # 任务
+        x = self.layer1(x)  # 任务
         
         x = self.layer2(x)
         x = self.layer3(x)
+        # x = F.softmax(x)
+        # print(x)
         return x

@@ -96,6 +96,7 @@ class env():
             self.pos = (1,0)
             self.score = 0
             self.score_list = [0]
+            self.dis_list = []
             self.last_move_time = time.time()
         self.screen.fill(self.back_ground)
         for x in range(self.size,self.screen_width,self.size):
@@ -103,37 +104,66 @@ class env():
         for y in range(Area_y[0] * self.size, self.screen_height, self.size):
             self.game.draw.line(self.screen, self.black, (0, y), (self.screen_width, y), self.line_width)
         
+    # def action_trans(self,pos,move):
+    #     if pos == (1,0): #right
+    #         if move[0] == 1:
+    #             pos = (0,-1)
+    #         elif move[1] == 1:
+    #             pos = pos
+    #         elif move[2] == 1:
+    #             pos = (0,1)
+    #     elif pos == (-1,0): #left
+    #         if move[0] == 1:
+    #             pos = (0,1)
+    #         elif move[1] == 1:
+    #             pos = pos
+    #         elif move[2] == 1:
+    #             pos = (0,-1)
+    #     elif pos == (0,1): #down
+    #         if move[0] == 1:
+    #             pos = (1,0)
+    #         elif move[1] == 1:
+    #             pos = pos
+    #         elif move[2] == 1:
+    #             pos = (-1,0)
+    #     elif pos == (0,-1): #up
+    #         if move[0] == 1:
+    #             pos = (-1,0)
+    #         elif move[1] == 1:
+    #             pos = pos
+    #         elif move[2] == 1:
+    #             pos = (1,0)
+    #     return pos
     def action_trans(self,pos,move):
         if pos == (1,0): #right
-            if move[0] == 1:
+            if move[0] == 0:
                 pos = (0,-1)
-            elif move[1] == 1:
+            elif move[0] == 1:
                 pos = pos
-            elif move[2] == 1:
+            elif move[0] == 2:
                 pos = (0,1)
         elif pos == (-1,0): #left
-            if move[0] == 1:
+            if move[0] == 0:
                 pos = (0,1)
-            elif move[1] == 1:
+            elif move[0] == 1:
                 pos = pos
-            elif move[2] == 1:
+            elif move[0] == 2:
                 pos = (0,-1)
         elif pos == (0,1): #down
-            if move[0] == 1:
+            if move[0] == 0:
                 pos = (1,0)
-            elif move[1] == 1:
+            elif move[0] == 1:
                 pos = pos
-            elif move[2] == 1:
+            elif move[0] == 2:
                 pos = (-1,0)
         elif pos == (0,-1): #up
-            if move[0] == 1:
+            if move[0] == 0:
                 pos = (-1,0)
-            elif move[1] == 1:
+            elif move[0] == 1:
                 pos = pos
-            elif move[2] == 1:
+            elif move[0] == 2:
                 pos = (1,0)
         return pos
-    
     def Step(self,move): # move = [1,0,0] or [0,1,0] or [0,0,1]
         self.screen.fill(self.back_ground)
         for x in range(self.size,self.screen_width,self.size):
@@ -152,7 +182,7 @@ class env():
                     self.score += self.food_style[0]
                     self.score_list.append(self.score)
                     self.speed = self.orispeed - 0.03 * (self.score//100)
-                    self.food = self.Creat_food(self.snake)
+                    self.food = self.Creat_food()
                     self.food_style = self.Food_Style()
                 else:
                     
@@ -161,7 +191,10 @@ class env():
                         self.snake.pop()
                     else:
                         self.game_over = True
-
+        head = self.snake[0]
+        food = self.food
+        dis = (head[0]-food[0]) ** 2 + (head[1]-food[1]) ** 2
+        self.dis_list.append(dis)
         if not self.game_over:
             self.game.draw.rect(self.screen, self.food_style[1], (self.food[0] * Size, self.food[1] * Size, Size, Size), 0)
         for s in self.snake:
@@ -169,7 +202,11 @@ class env():
         self.Print_Text(self.screen, self.font1, 30, 7, f'speed: {self.score // 100}')
         self.Print_Text(self.screen, self.font1, 450, 7, f'score: {self.score}')  
         self.game.display.update()
-        print("steped")
+        #print("steped")
+        if self.game_over == True:
+            self.game.quit()
+            return self.game_over
+
         return self.game_over
     def get_state(self):
         score = self.score 

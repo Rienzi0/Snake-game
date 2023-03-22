@@ -2,8 +2,8 @@ import numpy as np
 import time
 from dqn_model import DQN
 from env_0 import env
-Steps = 1000
-from reward_fn import score_reward,game_reward
+Steps = 100000
+from reward_fn import score_reward,game_reward,food_distance
 import os
 import torch
 def main(taskDim, action_dim,env):
@@ -13,7 +13,9 @@ def main(taskDim, action_dim,env):
     action_all = []  # 存储所有的动作 [None,1]
     reward_all = []  # 存储所有的奖励 [None,1]
     try:
-        DRL = torch.load("checkpoints/model.pth")
+        DRL = DQN(taskDim, action_dim)
+        DRL.train()
+        DRL.load_state_dict(torch.load("checkpoints/model.pth"))
         print("successfullt loaded")
     except:
         DRL = DQN(taskDim, action_dim)
@@ -24,12 +26,14 @@ def main(taskDim, action_dim,env):
 
         states = env.get_state()
         state_all.append(states)
-        action = DRL.choose_action(np.array(states))  # 通过调度算法得到分配 id
+        
+        action = DRL.choose_action(np.array(np.expand_dims(states,axis = 0)))  # 通过调度算法得到分配 id
+        #print(action)
         action_all.append(action)
         env.Step(action)
-        reward = score_reward(env) + game_reward(env)
+        reward = score_reward(env) + game_reward(env) + food_distance(env)
         
-        reward_all.append(reward)
+        reward_all.append([reward])
         
         # 减少存储数据量
         if len(state_all) > 30:
@@ -65,7 +69,7 @@ def main(taskDim, action_dim,env):
 
 if __name__ == '__main__':
     start_time = time.time()
-    taskDim = 10
+    taskDim = 12
     action_dim = 3
     E = env()
     E.Ready()

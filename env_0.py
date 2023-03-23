@@ -216,6 +216,7 @@ class env():
         for i in _body:
             snake_body.append(i[0])
             snake_body.append(i[1]) 
+            
         speed = self.speed
         food_x,food_y =self.food
         state = [score,direction_x,direction_y,speed,food_x,food_y] + snake_body

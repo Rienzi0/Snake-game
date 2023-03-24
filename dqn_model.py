@@ -20,7 +20,7 @@ class DQN(nn.Module):
         self.a_dim = a_dim  # 动作空间
 
         self.lr = 0.003  # learning rate
-        self.batch_size = 8  # 128
+        self.batch_size = 24  # 128
         self.epsilon = 0.95
         self.epsilon_decay = 0.997
         self.epsilon_min = 0.1
@@ -133,28 +133,36 @@ class QNet_v1(nn.Module):  # 通过 s 预测出 a
         self.s_task_dim = s_task_dim
         
         self.layer1 = nn.Sequential(  # 处理任务状态
-            nn.Linear(self.s_task_dim, 32),
+            nn.Linear(self.s_task_dim, 64),
             torch.nn.Dropout(0.2),
-            nn.BatchNorm1d(32),
+            nn.BatchNorm1d(64),
             nn.LeakyReLU(),
         )
         
         self.layer2 = nn.Sequential(  # 融合处理结果
+            nn.Linear(64, 32),
+            torch.nn.Dropout(0.2),
+            nn.BatchNorm1d(32),
+            nn.LeakyReLU(),
+        )
+        self.layer3 = nn.Sequential(
             nn.Linear(32, 16),
             torch.nn.Dropout(0.2),
             nn.BatchNorm1d(16),
             nn.LeakyReLU(),
-        )
-        self.layer3 = nn.Sequential(
-            nn.Linear(16, a_dim)
             
         )
+        self.layer4 = nn.Sequential(
+            nn.Linear(16,a_dim)
+        )
+
 
     def forward(self, x):
         x = self.layer1(x)  # 任务
         
         x = self.layer2(x)
         x = self.layer3(x)
+        x = self.layer4(x)
         # x = F.softmax(x)
         # print(x)
         return x

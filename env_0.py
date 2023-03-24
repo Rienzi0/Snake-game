@@ -47,9 +47,15 @@ class env():
 
     def init_snake(self):
         snake = deque()
-        snake.append((self.area_x[0]+2,self.area_y[0]))
-        snake.append((self.area_x[0]+1,self.area_y[0]))
-        snake.append((self.area_x[0],self.area_y[0]))
+        # snake.append((self.area_x[0]+2,self.area_y[0]))
+        # snake.append((self.area_x[0]+1,self.area_y[0]))
+        # snake.append((self.area_x[0],self.area_y[0]))
+        snake.append((13,10))
+        snake.append((12,10))
+        snake.append((11,10))
+        snake.append((10,10))
+
+
         return snake
         
         
@@ -81,7 +87,7 @@ class env():
         self.game_over = True
         self.game_start = False
         self.score = 0
-        self.orispeed = 0.3
+        self.orispeed = 0.03
         self.speed = self.orispeed
         self.last_move_time = None
         self.pause = False
@@ -212,11 +218,13 @@ class env():
         score = self.score 
         direction_x, direction_y = self.pos[0],self.pos[1]
         _body = [s for s in self.snake]
-        snake_body = []
-        for i in _body:
-            snake_body.append(i[0])
-            snake_body.append(i[1]) 
-            
+        snake_body = [i for i in range(20)]
+        for i,pos in enumerate (_body):
+            snake_body[i] = pos[0]
+            snake_body[2*i] = pos[1]
+            # snake_body.append(i[0])
+            # snake_body.append(i[1]) 
+
         speed = self.speed
         food_x,food_y =self.food
         state = [score,direction_x,direction_y,speed,food_x,food_y] + snake_body

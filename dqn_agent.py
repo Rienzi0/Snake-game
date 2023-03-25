@@ -35,7 +35,7 @@ def main(taskDim, action_dim,env):
         while not time.time() - env.last_move_time >= env.speed:    
             continue
         env.Step(action)
-        reward = 1 * score_reward(env) + 1 * game_reward(env) + 1 * food_distance(env)
+        reward = 1 * score_reward(env) + 1 * game_reward(env) + 5 * food_distance(env)
         #print(reward)
         reward_all.append([reward])
         

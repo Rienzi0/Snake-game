@@ -139,7 +139,7 @@ class env():
     #             pos = pos
     #         elif move[2] == 1:
     #             pos = (1,0)
-    #     return pos 
+    #     return pos  
     def action_trans(self,pos,move):
         if pos == (1,0): #right
             if move[0] == 0:

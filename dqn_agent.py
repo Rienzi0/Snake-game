@@ -13,9 +13,7 @@ def main(taskDim, action_dim,env):
     action_all = []  # 存储所有的动作 [None,1]
     reward_all = []  # 存储所有的奖励 [None,1]
     try:
-        DRL = DQN(taskDim, action_dim)
-        DRL.train()
-        DRL.load_state_dict(torch.load("checkpoints/model.pth"))
+        DRL = torch.load("checkpoints/model.pth")
         print("successfullt loaded")
     except:
         DRL = DQN(taskDim, action_dim)
@@ -57,7 +55,7 @@ def main(taskDim, action_dim,env):
             if (step % 10 == 0):
                 print("step:", step, ", loss:", loss)
             if step % 100 == 0:
-                torch.save(DRL.state_dict(),"checkpoints/model.pth")
+                torch.save(DRL,"checkpoints/model.pth")
         if env.game_over == True:
             env.Ready()
             env.Start()
